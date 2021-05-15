@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <time.h>
 #include "Simulator.h"
@@ -6,10 +8,12 @@
 class LightSensor : public BaseSensor
 {
 private:
-    float Value = 0;
-    float rawMeasurementData;
-    Simulator &the_connected_sim;
+    float measurementData;
 
 public:
+    LightSensor(Simulator &sim, std::string name) : BaseSensor(sim, name) {}
+
     float measure() override { return the_connected_sim.getTotalLightValue(); };
+
+    //virtual float measurementConversion();
 };

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <time.h>
 #include "Simulator.h"
@@ -6,10 +8,11 @@
 class WaterRegulator : public BaseRegulator
 {
 private:
-    Simulator &the_connected_sim;
-    
+    float regulateData;
+
 public:
-    //double measure() override { return the_connected_sim.getWaterValue(); };
-   
-    void regulate(float newWater) override {&the_connected_sim.addWater(newWater);};
+    WaterRegulator(Simulator &sim, std::string name) : BaseRegulator(sim, name){};
+
+    void regulate(float newWater) override { the_connected_sim.addWater(newWater); };
+    //virtual float regulateConversion();
 };

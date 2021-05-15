@@ -1,3 +1,6 @@
+#pragma once
+
+#include <iostream>
 #include <Sensors.h>
 #include "LightSensor.h"
 #include "WaterSensor.h"
@@ -9,7 +12,7 @@
 
 class BaseControl //ParentClass
 {
-private:
+protected:
     Plant &OurPlant;
     LightSensor SensorLight;
     WaterSensor SensorWater;
@@ -17,17 +20,19 @@ private:
     WaterRegulator RegulatorforWater;
 
 public:
-    BaseControl(Plant &plant) : OurPlant(plant){};
+    BaseControl(Plant &plant, LightSensor SensL, WaterSensor SensW, LightRegulator RegL, WaterRegulator RegW) : OurPlant(plant), SensorLight(SensL), SensorWater(SensW), RegulatorforLight(RegL), RegulatorforWater(RegW){};
+    //BaseSensor(Simulator &sim, std::string name) : the_connected_sim(sim), sensorName(name){};
+    //BaseControl(Plant &plant) : OurPlant(plant){};
 
     void updateLight()
     {
         //Under Minimum
-        if (OurPlant.getLightDesired(0) > SensorLight.measure())
+        if (OurPlant.getLightDesired(0) >= SensorLight.measure())
         {
             RegulatorforLight.regulate(1);
         }
         //Over Maximum
-        if (OurPlant.getLightDesired(1) < SensorLight.measure())
+        if (OurPlant.getLightDesired(1) <= SensorLight.measure())
         {
             RegulatorforLight.regulate(0);
         }
@@ -37,13 +42,16 @@ public:
         //Under Minimum
         if (OurPlant.getWaterDesired(0) > SensorWater.measure())
         {
-            RegulatorforWater.regulate(0);
+            //Filling water from current pos, to max
+            RegulatorforWater.regulate(OurPlant.getWaterDesired(1) - SensorWater.measure());
         }
+        /*
         //Over Maximum
         if (OurPlant.getWaterDesired(1) < SensorWater.measure())
         {
             RegulatorforWater.regulate(0);
         }
+        */
     };
 
     void UpdateValues()
