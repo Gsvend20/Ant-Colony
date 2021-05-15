@@ -1,6 +1,6 @@
 #include <Sensors.h>
 #include <Plants.h>
-#include "Simulator.h"
+#include "AntSimulator.h"
 #include <Control.h>
 #include <iostream>
 #include <string>
@@ -11,7 +11,7 @@
 
 //time_t timer;
 std::string;
-BaseControl Control;
+//BaseControl Control;
 
 int main(int argc, char const *argv[])
 {
