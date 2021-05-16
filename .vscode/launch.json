@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Tomato Example",
+            "name": "Ant.Example",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "Tomato_example.exe",
+            "program": "Program_Main.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/Debug",
