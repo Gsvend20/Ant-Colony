@@ -1,6 +1,8 @@
 #include <Sensors.h>
 #include <Plants.h>
 #include "AntSimulator.h"
+#include "Ant.h"
+#include "Hive.h"
 #include <Control.h>
 #include <iostream>
 #include <string>
@@ -12,6 +14,11 @@
 //time_t timer;
 std::string;
 //BaseControl Control;
+BaseAnt ant;
+BaseHive hive;
+
+int WorldLength = 1840;
+int WorldHeight = 880;
 
 int main(int argc, char const *argv[])
 {
@@ -19,9 +26,15 @@ int main(int argc, char const *argv[])
     Plant Box1_Plant(1, 2, 3, 4);
 
     Box1_Plant.getWaterDesired(1);
+    hive.setPos(WorldLength / 2, WorldHeight / 2);
+
+    sf::RectangleShape TestAnt{sf::Vector2f{ant.getSize(), ant.getSize()}};
+    TestAnt.setFillColor(sf::Color::Red);
+    TestAnt.setOrigin(ant.getSize() / 2, ant.getSize() / 2);
+    TestAnt.setPosition(hive.getPos(0), hive.getPos(1));
 
     // create the window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Greenhouse Simulator");
+    sf::RenderWindow window(sf::VideoMode(WorldLength, WorldHeight), "Greenhouse Simulator");
     window.setFramerateLimit(60);
 
     sf::Clock deltaClock;
@@ -37,7 +50,7 @@ int main(int argc, char const *argv[])
     See if changes is needed
     Edit if nessesary
     */
-        Control.UpdateValues();
+        //Control.UpdateValues();
 
         // check all the window's events that were triggered since the last
         // iteration of the loop
@@ -54,6 +67,7 @@ int main(int argc, char const *argv[])
 
         // draw everything here...
         //window.draw(my_tomato_view);
+        window.draw(TestAnt);
 
         // end the current frame
         window.display();
