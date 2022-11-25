@@ -1,3 +1,7 @@
+//#ifndef BaseHive
+//#define BaseHive
+#pragma once
+
 #include <string>
 #include <time.h>
 #include "Ant.h"
@@ -21,6 +25,8 @@ public:
     };
     //double measure() override { return the_connected_sim.getLampValue(); };
 
+    BaseHive(){};
+
     void CreateAnt(){};
 
     void UpdateAnts()
@@ -28,3 +34,5 @@ public:
         ant.moveRandom();
     };
 };
+
+//#endif //BaseHive

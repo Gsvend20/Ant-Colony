@@ -1,6 +1,8 @@
+#ifndef Antsimulator
+#define Antsimulator
+
 #include <string>
 #include <time.h>
-//#include <Sensors.h>
 
 class AntSimulator //Class
 {
@@ -13,3 +15,5 @@ public:
 
     void SimulateTime(int HourGot){};
 };
+
+#endif //AntSimulator

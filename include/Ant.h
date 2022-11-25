@@ -1,5 +1,7 @@
-#include <string>
-#include <time.h>
+//#ifndef BaseAnt
+//#define BaseAnt
+#pragma once
+
 #include "AntSimulator.h"
 #include <stdlib.h>
 
@@ -20,6 +22,8 @@ public:
     int getPos(int i) { return Antposition[i]; };
     int getDirection() { return AntDirection; };
 
+    BaseAnt(){};
+
     void MoveForward()
     {
         //New x Position
@@ -35,3 +39,5 @@ public:
         MoveForward();
     }
 };
+
+//#endif //BaseAnt
