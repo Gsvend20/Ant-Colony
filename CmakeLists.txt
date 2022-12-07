@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.17)
+#cmake_minimum_required(VERSION 3.17)
 
-project(greenhouse_control)
+#project(AntCol_control)
 
-add_subdirectory(lib/SFML)
+#add_subdirectory(libs/SFML)
 
-include_directories(lib/SFML/include)
+#include_directories(libs/SFML/include)
 
-add_executable(Program_Main src/Program_Main.cpp)
-target_include_directories(Program_Main  PRIVATE include)
-target_link_libraries(Program_Main  sfml-graphics sfml-system)
+#add_executable(Ant_Project_Main src/Ant_Project_Main.cpp)
+#target_include_directories(Ant_Project_Main  PRIVATE include)
+#target_link_libraries(Ant_Project_Main  sfml-graphics sfml-system)

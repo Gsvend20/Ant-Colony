@@ -8,7 +8,7 @@
             "name": "Ant.Example",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "Program_Main.exe",
+            "program": "Ant_Project_Main.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/Debug",
