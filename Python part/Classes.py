@@ -1,11 +1,23 @@
 import random as rm
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import cv2
+import functions as f
 mapsize = [700, 700]
 
-img = np.zeros((mapsize[0], mapsize[1], 3), np.uint8)
 
+def takethird(elem):
+    return elem[2]
+
+
+img = np.zeros((mapsize[0], mapsize[1], 3), np.uint8)
+preimg = img
+counter = 1
+
+foodcolor = [0, 255, 0]
+homecolor = [255, 0, 0]
+roamcolor = [0, 0, 255]
+fightcolor = [10, 20, 30]
 
 foodlist = []
 antlist = []
@@ -42,10 +54,12 @@ def UpdateAll():
 
 
 def showall():
+    global counter
+    #preimg = img
     img = np.zeros((mapsize[0], mapsize[0], 3), np.uint8)
     for i in range(0, len(Phermonelist)):  # Phermone
-        cv2.rectangle(img, (int(Phermonelist[i].Pos[0]-Phermonelist[i].size[0]/2), int(Phermonelist[i].Pos[1]-Phermonelist[i].size[1]/2)), (
-            int(Phermonelist[i].Pos[0]+Phermonelist[i].size[0]/2), int(Phermonelist[i].Pos[1]+Phermonelist[i].size[1]/2)), (int(Phermonelist[i].color[0]), int(Phermonelist[i].color[1]), int(Phermonelist[i].color[2])), 0)
+        img[Phermonelist[i].Pos[0]][Phermonelist[i].Pos[1]] = (
+            Phermonelist[i].color[0], Phermonelist[i].color[1], Phermonelist[i].color[2])
     for i in range(0, len(foodlist)):  # FOOD
         cv2.rectangle(img, (int(foodlist[i].Pos[0]-foodlist[i].size[0]/2), int(foodlist[i].Pos[1]-foodlist[i].size[1]/2)), (
             int(foodlist[i].Pos[0]+foodlist[i].size[0]/2), int(foodlist[i].Pos[1]+foodlist[i].size[1]/2)), (foodlist[i].color[0], foodlist[i].color[1], foodlist[i].color[2]), 0)
@@ -57,6 +71,9 @@ def showall():
             hivelist[i].HivePos[1])), 5, (255, 0, 0), -1)
 
     cv2.imshow('image', img)
+    imgname = 'Images/IMG'+str(counter)+'.png'
+    cv2.imwrite(imgname, img,)
+    counter += 1
     cv2.waitKey(1)
     #print("antangle: "+str(antlist[0].angle))
 
@@ -68,17 +85,16 @@ class Ant:
         self.visangle = visangle
         self.Pos = [Posx, Posy]
         #print('Pos is: ' + str(self.Pos))
-        self.angle = rm.randrange(0, 360, 1)
-        self.Phcolor = [rm.randrange(0, 255, 1), rm.randrange(
-            0, 255, 1), rm.randrange(0, 255, 1)]
+        self.angle = 180  # rm.randrange(0, 360, 1)
     speed = 1
-    visrange = 10
+    visrange = 50
     size = [1, 2]
     moveangle = 10
-    mode = 'find'
+    mode = 'roam'
+    Phcolor = roamcolor
     steps = 0
-    color = [0, 255, 0]
-    health = rm.randrange(50, 250, 1)
+    color = [125, 240, 14]
+    health = 100
 
     def moveForward(self):
         self.angle += rm.randrange(0, (self.moveangle*2)+1, 1)-self.moveangle
@@ -97,35 +113,59 @@ class Ant:
             print('y pos is: '+str(self.Pos[1]))
             # return self.Pos[1]
 
+    def scanArea(self):
+        seelistP = []
+        fullimg = preimg
+        if self.mode == "food":
+            #np.where(img >= foodcolor, 255, 0)
+            pPhemFind = foodcolor
+        elif self.mode == "home":
+            pPhemFind = homecolor
+        elif self.mode == "roam":
+            pPhemFind = roamcolor
+        elif self.mode == "fight":
+            pPhemFind = fightcolor
+        for i in range(int(self.Pos[0]-self.visrange), int(self.Pos[0]+self.visrange), 1):
+            for j in range(int(self.Pos[1]-self.visrange), int(self.Pos[1]+self.visrange), 1):
+                if abs(f.anglVectors(np.cos(self.angle), np.sin(self.angle), i-self.Pos[0], j-self.Pos[1])) < self.angle and (img[i, j, 0] == pPhemFind[0] or img[i, j, 1] > 0 or img[i, j, 2] > 0):
+                    seelistP.append(
+                        [i, j, (np.sqrt(np.power(i-self.Pos[0], 2)+np.power(j-self.Pos[1], 2)))])
+        if len(seelistP) > 0:
+            seelistP.sort(
+                reverse=True, key=takethird)
+            #self.angle += 1 *(self.angle -f.anglVectors(self.Pos[0], self.Pos[1], pPos[0], pPos[1]))
+            self.angle = f.anglVectors(
+                self.Pos[0], self.Pos[1], i, j)
+        print('list of points'+str(seelistP))
+
     def update(self):
+        self.scanArea()
         self.moveForward()
-        self.health -= 1
+        #self.health -= 1
         if self.steps > 5:
             Phermonelist.append(
-                Phermone(self.Phcolor, self.Pos[0], self.Pos[1]))
+                Phermone(color=self.Phcolor, Posx=self.Pos[0], Posy=self.Pos[1], mode=self.mode))
             self.steps = 0
-        if self.health <= 0:
-            hivelist[0].food += 5
-            return False
-        else:
-            return True
+        # if self.health <= 0:
+        #    hivelist[0].food += 5
+        #    return False
+        # else:
+        #    return True
 
     def seePhermone(self):
         seelistP = []
-        for i in range(0, len(antlist)):
-            for j in range(0, len(Phermonelist)):
-                pPos = [Phermonelist[j].Pos[0],
-                        Phermonelist[j].Pos[1]]
-                pdist = (np.sqrt(pPos ^ 2+pPos ^ 22))
-                if pdist <= self.visrange:
-                    seelistP.append(Phermonelist[j])
-        seelistP.sort(
-            reverse=True, key=Phermonelist[j].strength)
-
-        if self.mode == 'find':
-            for x in range(0, len(seelistP)):
-                if seelistP[x].smell == self.mode:
-                    self.moveForward()
+        for j in range(0, len(Phermonelist)):
+            pPos = [Phermonelist[j].Pos[0],
+                    Phermonelist[j].Pos[1]]
+            pdist = (np.sqrt(np.power(pPos[0], 2)+np.power(pPos[1], 2)))
+            if pdist <= self.visrange and Phermonelist[j].mode == self.mode and f.anglVectors(self.Pos[0], self.Pos[1], pPos[0], pPos[1]) <= (self.angle + self.visangle) and f.anglVectors(self.Pos[0], self.Pos[1], pPos[0], pPos[1]) >= (self.angle - self.visangle):
+                seelistP.append(Phermonelist[j])
+        if len(seelistP) > 0:
+            seelistP.sort(
+                reverse=True, key=seelistP.strength)
+            #self.angle += 1 *(self.angle -f.anglVectors(self.Pos[0], self.Pos[1], pPos[0], pPos[1]))
+            self.angle = f.anglVectors(
+                self.Pos[0], self.Pos[1], pPos[0], pPos[1])
 
 
 class Hive:
@@ -175,16 +215,17 @@ class Hive:
 
 
 class Phermone:
-    def __init__(self, color, Posx, Posy):
+    def __init__(self, color, Posx, Posy, mode):
         self.color = color
+        self.mode = mode
         self.Pos = [Posx, Posy]
-    lifetime = 50
+    strength = 50
     size = [2, 2]
     # color =
 
     def update(self):
-        self.lifetime -= 1
-        if self.lifetime <= 0:
+        self.strength -= 1
+        if self.strength <= 0:
             return False
         else:
             return True

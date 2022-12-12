@@ -18,8 +18,8 @@ def showall():
 ant_array_test = []
 #Cl.hivelist = []
 Cl.hivelist.append(Cl.Hive("Main", 0, 360, 5, 5, 10,
-                           5000, Cl.mapsize[0]/2, Cl.mapsize[1]/2))
-Cl.hivelist[0].spawnAnt(2)
+                           500000, Cl.mapsize[0]/2, Cl.mapsize[1]/2))
+Cl.hivelist[0].spawnAnt(1)
 ant_array_test.append(Cl.Ant('Henning', 0, 5, 0, 0))
 # print(ant_array_test[0].name)
 # print(ant_array_test[0].antPos(0))
@@ -36,7 +36,7 @@ while True:
     # Cl.hivelist[0].showall()
     UpdateAll()
     showall()
-    Cl.hivelist[0].food += 0.7
+    Cl.hivelist[0].food += 0.1
     # time.sleep(3)
     # print('looping')
     # print(Cl.hivelist[0].food)
